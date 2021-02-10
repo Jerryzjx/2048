@@ -34,14 +34,12 @@ public class _2048 {
 
         FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
         BufferedReader in = new BufferedReader(fr);
-        FileWriter fw = new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
-        PrintWriter pw = new PrintWriter(fw);
         String line = in.readLine();
         int i = 0;
         String[] users = new String[20];
         while(line != null){
             users[i] = String.valueOf(line.split(" "));
-            if(users[i]==user_name){
+            if(users[i].equals(user_name)){
                 System.out.println("Username exists!");
                 break;
             }
