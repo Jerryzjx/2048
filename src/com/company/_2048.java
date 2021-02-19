@@ -10,6 +10,7 @@ import java.util.*;
 public class _2048 {
     static String user_name = "";
     public static void main(String[] args) throws IOException {
+        int[][] grid = new int [4][4];
         User_Access();
         String filename = "C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt";
         ArrayList<String> users = Read_user(filename);
@@ -61,8 +62,38 @@ public class _2048 {
        output.close();
     }
 
-    public static void check_user_file_exist() {
+    public static void check_user_file_exist() throws IOException {
+        Scanner sc = new Scanner(System.in);
+        FileReader uf = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\grid.txt");
+        BufferedReader in = new BufferedReader(uf);
+        String line = in.readLine();
+        int i = 0;
+        ArrayList<String> userGrid;
+        userGrid = new ArrayList<>();
+        while(line != null && i<i+1 && i<25) {
+            if (userGrid.get(i).contains(user_name)) {
+                System.out.println("Previous saved grid found. \n Would you like to contiune from previous saved grid? " +
+                        "\n Yes to contiune, No if you want to start again");
+                boolean flag_cont = false;
+                while (!flag_cont) {
+                    try {
+                        String start_from_saved = sc.next();
+                        if (!start_from_saved.equals("Yes")||!start_from_saved.equals("No")){
+                            Exception UserinputIsInvalid = new Exception();
+                        }
+                        flag_cont = true;
+                        System.out.println("Loading saved game...");
 
+                    } catch (InputMismatchException e) {
+                        System.out.println("Please input a string");
+                    }
+                    catch (Exception UserinputException){
+                        System.out.println("Please input 'Yes' to load from saved game, 'No' to start from a new grid");
+                    }
+                }
+                i++;
+            }
+        }
     }
     public static void write_highest_score(){
 
