@@ -1,8 +1,6 @@
 package com.company;
-
 import java.io.*;
 import java.util.*;
-
 // Name: Jerry Zhang
 // Date: Feb.10 2021 -
 // Project name: 2048 with file io
@@ -25,11 +23,12 @@ public class _2048 {
             } else {
                 System.out.println("New User Added");
                 new_user(filename);
+                Random_Start_Grid(grid);
             }
             break;
         }
         grid = check_user_file_exist();
-        System.out.println(Arrays.deepToString(grid));
+        print_grid(grid);
     }
     public static void User_Access() {
         Scanner sc = new Scanner(System.in);
@@ -47,18 +46,26 @@ public class _2048 {
         }
     }
     public static ArrayList <String> Read_user (String filename) throws IOException {
+        try {
+            File users = new File("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
+           users.createNewFile();
+        }catch(IOException FileNotFoundException ){
 
-        FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
-        BufferedReader in = new BufferedReader(fr);
-        String line = in.readLine();
-        int i = 0;
-       ArrayList<String> userList;
-       userList = new ArrayList<>();
-        while(line != null && i<i+1 && i<25){
-            userList.add(in.readLine());
-           //System.out.println(userList.get(i));
-           i++;
         }
+            FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
+            BufferedReader in = new BufferedReader(fr);
+
+
+            String line = in.readLine();
+
+            int i = 0;
+            ArrayList<String> userList;
+            userList = new ArrayList<>();
+            while (line != null && i < i + 1 && i < 25) {
+                userList.add(in.readLine());
+                //System.out.println(userList.get(i));
+                i++;
+            }
 
         return userList;
     }
@@ -90,10 +97,13 @@ public class _2048 {
                             throw UserinputIsInvalid;
                         }
                         else if(start_from_saved.equals("No")){
+                            sc.close();
                             flag_cont = true;
+                            Random_Start_Grid(grid);
                             break;
                         }
                         else{
+                            sc.close();
                             flag_cont = true;
                             read_user_grid(i,grid);
                             break;
@@ -122,7 +132,6 @@ public class _2048 {
         }
         System.out.println(usergrid);
         String[] usrgrid = usergrid.split(" ");
-System.out.println(Arrays.toString(usrgrid));
         int count = 0;
             for(int l=0; l<4; l++){
 
@@ -135,9 +144,31 @@ System.out.println(Arrays.toString(usrgrid));
             }
         return grid;
     }
-   // public static int[][] Generate_Random_Grid(int [][] grid){
+    public static int[][] Random_Start_Grid(int [][] grid){
+        // 2 tiles were spawned randomly
+    Random rand = new Random();
+    int init_tile1 = rand.nextInt(7-0)+0;
+    int init_tile2 = rand.nextInt(15-8)+8;
 
-  //  }
+        int col =0;
+        int row=0;
+        if(init_tile1 >=3){
+            row = 1;
+            col = init_tile1-3;
+        }else{
+            col= init_tile1;
+        }
+        grid[row][col]=2;
+        if(init_tile2 >=11){
+            row = 3;
+            col = init_tile2-11;
+        }else{
+            row = 2;
+            col= init_tile2-7;
+        }
+        grid[row][col]=2;
+        return grid;
+    }
    // public static int[][] rotate(int[][]grid){
 
  //   }
@@ -147,11 +178,33 @@ System.out.println(Arrays.toString(usrgrid));
    // public static int[][] Random_Tile(){
 
    // }
+    public static void print_grid(int[][]grid){
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                if(grid[i][j]>10 && grid[i][j]<100){
+                    System.out.print(" "+grid[i][j]+"   ");
+                }else if(grid[i][j]>100 && grid[i][j]<1000){
+                    System.out.print(" "+grid[i][j]+"  ");
+                }else if(grid[i][j]>1000){
+                    System.out.print(grid[i][j]+"  ");
+                }else{
+                    System.out.print("  "+grid[i][j]+"   ");
+                }
+            }
+            System.out.println();
+        }
+    }
 
     public static void write_highest_score(){
 
     }
    public static void load_leaderboard(){
 
+   }
+   public static void startGame(int[][]grid){
+        System.out.println("Welcome to the 2048 game with file.io \n Please select a color for the gameboard: \n " +
+                "0 for default, 1 for Green, 2 for Cyan");
+
+        print_grid(grid);
    }
 }
