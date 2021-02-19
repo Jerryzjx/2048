@@ -204,7 +204,7 @@ public class _2048 {
    public static void startGame(int[][]grid){
         System.out.println("Welcome to the 2048 game with file.io \n Please select a color for the gameboard: \n " +
                 "0 for default, 1 for Green, 2 for Cyan");
-
+        System.out.println("How To Play 2048: \n Use A for left, W for up, S for down and D for right; press X to quit the game");
         print_grid(grid);
    }
 }
