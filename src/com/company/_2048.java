@@ -392,7 +392,7 @@ public class _2048 {
                 if (grid[i][j] > 10 && grid[i][j] < 100) {
                     System.out.print("  " + grid[i][j] + "   ");
                 } else if (grid[i][j] > 100 && grid[i][j] < 1000) {
-                    System.out.print(" " + grid[i][j] + " ");
+                    System.out.print(" " + grid[i][j] + "   ");
                 } else if (grid[i][j] > 1000) {
                     System.out.print(grid[i][j] + "   ");
                 } else {
@@ -401,10 +401,6 @@ public class _2048 {
             }
             System.out.println();
         }
-    }
-
-    public static void load_leaderboard() {
-
     }
 
     public static int Direction(String key) {
@@ -468,6 +464,13 @@ public class _2048 {
                 System.out.println("Score :" + score);
                 save_user_grid(userline, grid, userfile,score);
                 save_score(score);
+                ArrayList<Users> Leaderboard = read_leaderboard();
+                write_leaderboard(Leaderboard);
+                System.out.println("Display the leaderboard?");
+                String display = key.next();
+                if(display.equals("Yes")){
+                    display_Leaderboard();
+                }
                 break;
             }
 
@@ -478,8 +481,7 @@ public class _2048 {
     public static void save_score(int score) throws IOException {
         String user_score = Integer.toString(score);
         BufferedWriter output = new BufferedWriter(new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt", true));
-        output.append("\n").append(user_name);
-        output.append("\n").append(user_score);
+        output.append(user_name).append(" ").append(user_score);
         output.close();
     }
 
@@ -513,5 +515,107 @@ public class _2048 {
         in.write(userscore);
         in.close();
         uf.close();
+    }
+   public static ArrayList<Users> read_leaderboard() throws IOException {
+       FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt");
+       BufferedReader in = new BufferedReader(fr);
+       ArrayList<Users> Leaderboard = new ArrayList<Users>();
+       String currentLine = in.readLine();
+        int usrscores = 0;
+       String name = " ";
+       while (currentLine != null)
+       {
+           String[] UsrDetail = currentLine.split(" ");
+
+            name = UsrDetail[0];
+
+           usrscores = Integer.valueOf(UsrDetail[1]);
+
+           //Creating Student object for every student record and adding it to ArrayList
+
+           Leaderboard.add(new Users(name, usrscores));
+
+           currentLine = in.readLine();
+       }
+
+       //Sorting ArrayList studentRecords based on marks
+
+       Collections.sort(Leaderboard, new scoresCompare());
+       fr.close();
+        return Leaderboard;
+   }
+   public static void write_leaderboard(ArrayList<Users> Leaderboard) throws IOException {
+       BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt"));
+
+       //Writing every studentRecords into output text file
+
+       for (Users user : Leaderboard)
+       {
+           writer.write(user.usernames);
+
+           writer.write(" "+user.userscores);
+
+           writer.newLine();
+       }
+       writer.close();
+   }
+    public static void display_Leaderboard() throws IOException {
+        FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt");
+        BufferedReader in = new BufferedReader(fr);
+        String line = in.readLine();
+        int i=0;
+        while(line!=null){
+            if(i==0){
+                System.out.println(ANSI_YELLOW+(i+1)+": "+line+ANSI_RESET);
+            }
+            else if(i==1){
+                System.out.println(ANSI_CYAN+(i+1)+": "+line+ANSI_RESET);
+
+            }
+            else if(i==2){
+                System.out.println(ANSI_GREEN+(i+1)+": "+line+ANSI_RESET);
+
+            }else{
+                System.out.println((i+1)+": "+line);
+            }
+            line = in.readLine();
+            i++;
+            }
+        }
+
+    }
+
+class Users
+{
+    String usernames;
+
+    int userscores;
+
+    public Users(String usernames, int userscores)
+    {
+        this.usernames = usernames;
+
+        this.userscores = userscores;
+    }
+}
+
+//nameCompare Class to compare the names
+class nameCompare implements Comparator<Users>
+{
+    @Override
+    public int compare(Users s1, Users s2)
+    {
+        return s1.usernames.compareTo(s2.usernames);
+    }
+}
+
+//marksCompare Class to compare the marks
+
+class scoresCompare implements Comparator<Users>
+{
+    @Override
+    public int compare(Users s1, Users s2)
+    {
+        return s2.userscores - s1.userscores;
     }
 }
