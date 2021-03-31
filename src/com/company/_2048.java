@@ -2,10 +2,11 @@ package com.company;
 import java.io.*;
 import java.util.*;
 // Name: Jerry Zhang
-// Date: Feb.10 2021 - Feb.28 2021
-// Project name: _2048 with file io
+// Date: Feb.10 2021 - Mar.9 2021
+// Project name: 2048 with file io
 // purpose: make an unbreakable 2048 game!
 public class _2048 {
+    // initialize global variables
     public static final String ANSI_RESET = "\u001B[0m"; //from      https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -16,40 +17,50 @@ public class _2048 {
     static int[][] grid = new int[4][4];
     static int tileint[] = {0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048};
     static int score = 0;
-
+        // main method
     public static void main(String[] args) throws IOException {
-        User_Access();
-        String filename = "C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt";
-        ArrayList<String> users = Read_user(filename);
-        String gridfile = "C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\" + (user_name) + "_grid.txt";
-        for (int i = 0; i < users.size(); i++) {
-            if (user_name.equals(users.get(i))) {
-                System.out.println("Username exists");
-                break;
-            } else if (i == users.size() - 1) {
-                System.out.println("New User Added");
-                new_user(filename);
-                Random_Tile();
+        do {
+            User_Access();
+            String filename = "C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt";
+            ArrayList<String> users = Read_user(filename);
+            String gridfile = "C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\" + (user_name) + "_grid.txt";
+            for (int i = 0; i < users.size(); i++) {
+                if (user_name.equals(users.get(i))) {
+                    System.out.println(ANSI_GREEN+"Username exists"+ANSI_RESET);
+                    break;
+                } else if (i == users.size() - 1) {
+                    System.out.println(ANSI_CYAN+"New User Added"+ANSI_RESET);
+                    new_user(filename);
+                    Random_Tile();
+                }
             }
-        }
-        score = read_user_score(grid,gridfile);
-        startGame(grid = check_user_file_exist(gridfile), gridfile);
+            score = read_user_score(grid, gridfile);
+            startGame(grid = check_user_file_exist(gridfile), gridfile);
+        }while(contiune());
     }
+    // User_Access: Let the user input their username
+    // @param: none
+    //@return: void
     public static void User_Access() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Welcome to 2048 game, please type in your username below");
-        boolean flag_user = false;
-        while (!flag_user) {
-            try {
-                user_name = sc.next();
-                flag_user = true;
-                System.out.println(user_name + " Welcome to the 2048 game");
+            Scanner sc = new Scanner(System.in);
+            System.out.println(ANSI_CYAN+"Welcome to 2048 game, please type in your username below"+ANSI_RESET);
+            boolean flag_user = false;
+            while (!flag_user) {
+                try {
+                    user_name = sc.next();
+                    flag_user = true;
+                    System.out.println(ANSI_CYAN+user_name + " Welcome to the 2048 game"+ANSI_RESET);
 
-            } catch (InputMismatchException e) {
-                System.out.println("Please input a string");
+                } catch (InputMismatchException e) {
+                    sc.next();
+                    System.out.println("Please input a string");
+                }
             }
-        }
+
     }
+    // Read_User: read usernames from the file and store them into an ArrayList
+    // @param: String
+    //@return: Arraylist<String>
     public static ArrayList<String> Read_user(String filename) throws IOException {
         try {
             File users = new File("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt");
@@ -76,14 +87,18 @@ public class _2048 {
         return userList;
 
     }
-
+    // new_user: add the new username to the last line of the file
+    // @param: String
+    //@return: void
     public static void new_user(String filename) throws IOException {
 
         BufferedWriter output = new BufferedWriter(new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\users.txt", true));
         output.append("\n").append(user_name);
         output.close();
     }
-
+    // check_user_file_exist: check if the previous user saved grid exists in the file
+    // @param: String
+    //@return: int[][]
     public static int[][] check_user_file_exist(String userfile) throws IOException {
         try {
             File users = new File(userfile);
@@ -100,8 +115,8 @@ public class _2048 {
         userGrid = new ArrayList<>();
         while (line != null && i < i + 1 && i < 25) {
             if (line.equals(user_name)) {
-                System.out.println("Previous saved grid found. \n Would you like to contiune from previous saved grid? " +
-                        "\n Yes to contiune, No if you want to start again");
+                System.out.println(ANSI_GREEN+"Previous saved grid found. \n Would you like to contiune from previous saved grid? " +
+                        "\n Yes to contiune, No if you want to start again"+ANSI_RESET);
                 boolean flag_cont = false;
                 while (!flag_cont) {
                     try {
@@ -112,6 +127,7 @@ public class _2048 {
                         } else if (start_from_saved.equals("No")) {
                             //sc.close();
                             Random_Tile();
+                            score = 0;
                             flag_cont = true;
                             break;
                         } else {
@@ -123,9 +139,10 @@ public class _2048 {
                             break;
                         }
                     } catch (InputMismatchException e) {
-                        System.out.println("Please input a string");
+                        sc.next();
+                        System.out.println(ANSI_RED+"Please input a string"+ANSI_RESET);
                     } catch (Exception UserinputIsInvalid) {
-                        System.out.println("Please input 'Yes' to load from saved game, 'No' to start from a new grid");
+                        System.out.println(ANSI_YELLOW+"Please input 'Yes' to load from saved game, 'No' to start from a new grid"+ANSI_RESET);
                     }
                 }
                 break;
@@ -136,7 +153,9 @@ public class _2048 {
         in.close();
         return grid;
     }
-
+    // read_user_grid: read the saved user grid
+    // @param: int, int[][], String
+    //@return: void
     public static void read_user_grid(int i, int[][] grid, String userfile) throws IOException {
         FileReader uf = new FileReader(userfile);
         BufferedReader in = new BufferedReader(uf);
@@ -160,6 +179,9 @@ public class _2048 {
         in.close();
         uf.close();
     }
+    // read_user_score: read user saved score from the saved grid file
+    // @param: int[][], String
+    //@return: int
     public static int read_user_score(int[][]grid,String userfile) throws IOException {
         try {
             File users = new File(userfile);
@@ -182,7 +204,9 @@ public class _2048 {
         }
         return score;
     }
-
+    // left: move the grid to the left
+    // @param: int[][]
+    //@return: int[][]
     public static int[][] left(int[][] grid) {
         for (int x = 0; x < 4; x++) {
             for (int y = 1; y < 4 && y > -1; y++) {
@@ -210,7 +234,9 @@ public class _2048 {
         }
         return grid;
     }
-
+    // right: move the grid to the right
+    // @param: int[][]
+    //@return: int[][]
     public static int[][] right(int[][] grid) {
         for (int x = 0; x < 4; x++) {
             for (int y = 2; y < 3 && y > -1; y--) {
@@ -238,7 +264,9 @@ public class _2048 {
         }
         return grid;
     }
-
+    // up: move the grid upward
+    // @param: int[][]
+    //@return: int[][]
     public static int[][] up(int[][] grid) {
         for (int y = 0; y < 4; y++) {
             for (int x = 1; x < 4 && x > -1; x++) {
@@ -266,7 +294,9 @@ public class _2048 {
         }
         return grid;
     }
-
+    // down: move the grid downward
+    // @param: int[][]
+    //@return: int[][]
     public static int[][] down(int[][] grid) {
         for (int y = 3; y > -1; y--) {
             for (int x = 2; x > -1; x--) {
@@ -294,7 +324,9 @@ public class _2048 {
         }
         return grid;
     }
-
+    // Check_index: check if the index next to the corresponding index has the same value
+    // @param: int[], int
+    //@return: int
     public static int Check_index(int[] tileint, int element) {
         for (int i = 0; i < tileint.length; i++) {
             if (tileint[i] == element) {
@@ -303,7 +335,9 @@ public class _2048 {
         }
         return 0;
     }
-
+    // move: move the grid according to user's choice
+    // @param: int[][], int
+    //@return: int[][]
     public static int[][] move(int[][] grid, int direction) {
         if (direction == 0) {
             grid = left(grid);
@@ -317,7 +351,9 @@ public class _2048 {
         }
         return grid;
     }
-
+    // Random_Tile: Randomly put a tile in the grid where it is empty
+    // @param: none
+    //@return: void
     public static void Random_Tile() {
         if (!check_Full(grid)) {
             Random it = new Random();
@@ -338,7 +374,9 @@ public class _2048 {
 
         }
     }
-
+    // check_Win : check if the user grid has 2048
+    // @param: int[][]
+    //@return: boolean
     public static boolean check_Win(int[][] grid) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -350,7 +388,9 @@ public class _2048 {
         }
         return false;
     }
-
+    // check_Full: check if the user grid is full
+    // @param: int[][]
+    //@return: boolean
     public static boolean check_Full(int[][] grid) {
         boolean avaliable_space = true;
         boolean merge_col = true;
@@ -385,7 +425,9 @@ public class _2048 {
         }
         return false;
     }
-
+    // print_grid: print the current grid
+    // @param: int[][]
+    //@return: void
     public static void print_grid(int[][] grid) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -402,7 +444,9 @@ public class _2048 {
             System.out.println();
         }
     }
-
+    // Direction: return a numerical value from the user input
+    // @param: String
+    //@return: int
     public static int Direction(String key) {
         switch (key) {
             case "A": {
@@ -424,12 +468,34 @@ public class _2048 {
                 return 4;
         }
     }
-
+    // startGame: Start the 2048 game
+    // @param: int[][], String
+    //@return: void
     public static void startGame(int[][] grid, String userfile) throws IOException {
         Scanner key = new Scanner(System.in);
         System.out.println("Welcome to the 2048 game with file.io \n Please select a color for the gameboard: \n " +
                 "0 for default, 1 for Cyan");
-
+        boolean flag_cont = false;
+        while (!flag_cont) {
+            try {
+                int color = key.nextInt();
+                if (color!=0 && color!=1) {
+                    Exception UserinputIsInvalid = new Exception();
+                    throw UserinputIsInvalid;
+                } else if (color==0) {
+                    flag_cont = true;
+                    System.out.println("Default Color");
+                } else {
+                    flag_cont = true;
+                   System.out.println(ANSI_CYAN+"Cyan Mode");
+                }
+            } catch (InputMismatchException e) {
+                key.next();
+                System.out.println(ANSI_RED+"Please input an integer"+ANSI_RESET);
+            } catch (Exception UserinputIsInvalid) {
+                System.out.println(ANSI_YELLOW+"Please input 0 for default, 1 for Cyan"+ANSI_RESET);
+            }
+        }
         String user_key = "X";
         do {
             print_grid(grid);
@@ -460,16 +526,32 @@ public class _2048 {
             check_Win(grid);
             if (check_Full(grid) || direction == 4) {
                 check_Win(grid);
-                System.out.println("Game Over :(");
+                System.out.println(ANSI_RESET+"Game Over :(");
                 System.out.println("Score :" + score);
-                save_user_grid(userline, grid, userfile,score);
+                save_user_grid( grid, userfile,score);
                 save_score(score);
                 ArrayList<Users> Leaderboard = read_leaderboard();
                 write_leaderboard(Leaderboard);
                 System.out.println("Display the leaderboard?");
-                String display = key.next();
-                if(display.equals("Yes")){
-                    display_Leaderboard();
+                boolean flag_dis = false;
+                while (!flag_dis) {
+                    try {
+                        String display = key.next();
+                        if (!display.equals("Yes") && !display.equals("No")) {
+                            Exception UserinputIsInvalid = new Exception();
+                            throw UserinputIsInvalid;
+                        } else if (display.equals("No")) {
+                            flag_dis = true;
+                        } else {
+                            flag_dis = true;
+                            display_Leaderboard();
+                        }
+                    } catch (InputMismatchException e) {
+                        key.next();
+                        System.out.println(ANSI_RED+"Please input a String"+ANSI_RESET);
+                    } catch (Exception UserinputIsInvalid) {
+                        System.out.println(ANSI_YELLOW+"Please input 'Yes' to display the leaderboard, 'No' to skip this function"+ANSI_RESET);
+                    }
                 }
                 break;
             }
@@ -477,15 +559,19 @@ public class _2048 {
         } while (!check_Full(grid));
 
     }
-
+    // save_score: save the user's username and score to the leaderboard
+    // @param: int
+    //@return: void
     public static void save_score(int score) throws IOException {
         String user_score = Integer.toString(score);
         BufferedWriter output = new BufferedWriter(new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt", true));
         output.append(user_name).append(" ").append(user_score);
         output.close();
     }
-
-    public static void save_user_grid(int i, int[][] grid, String userfile, int score) throws IOException {
+    // save_user_grid: save the user's grid, username, grid and score
+    // @param: int[][], String, int
+    //@return:void
+    public static void save_user_grid(int[][] grid, String userfile, int score) throws IOException {
         FileWriter uf = new FileWriter(userfile);
         BufferedWriter in = new BufferedWriter(uf);
 
@@ -516,6 +602,9 @@ public class _2048 {
         in.close();
         uf.close();
     }
+    // read_leaderboard: read the leaderboard for sorting
+    // @param: none
+    //@return: ArrayList<Users>
    public static ArrayList<Users> read_leaderboard() throws IOException {
        FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt");
        BufferedReader in = new BufferedReader(fr);
@@ -531,23 +620,25 @@ public class _2048 {
 
            usrscores = Integer.valueOf(UsrDetail[1]);
 
-           //Creating Student object for every student record and adding it to ArrayList
+           //Creating user object for every user and adding it to ArrayList
 
            Leaderboard.add(new Users(name, usrscores));
 
            currentLine = in.readLine();
        }
 
-       //Sorting ArrayList studentRecords based on marks
+       //Sorting ArrayList based on user scores
 
        Collections.sort(Leaderboard, new scoresCompare());
        fr.close();
         return Leaderboard;
    }
+    // write_leaderboard: write the sorted leaderboard to the file
+    // @param: ArrayList<Users>
+    //@return: void
    public static void write_leaderboard(ArrayList<Users> Leaderboard) throws IOException {
        BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt"));
 
-       //Writing every studentRecords into output text file
 
        for (Users user : Leaderboard)
        {
@@ -559,6 +650,9 @@ public class _2048 {
        }
        writer.close();
    }
+    // display_Leaderboard: display the sorted leaderboard
+    // @param: none
+    //@return:  void
     public static void display_Leaderboard() throws IOException {
         FileReader fr = new FileReader("C:\\Users\\Leonard\\IdeaProjects\\2048\\src\\com\\company\\scores.txt");
         BufferedReader in = new BufferedReader(fr);
@@ -582,9 +676,39 @@ public class _2048 {
             i++;
             }
         }
-
+    // contiune: ask the user to contiune the game
+    // @param: none
+    //@return: boolean
+        public static boolean contiune(){
+        Scanner sc = new Scanner(System.in);
+         System.out.println("Contiune? Yes to contiune, No to end the game");
+            boolean flag_cont = false;
+            while (!flag_cont) {
+                try {
+                    String start_again = sc.next();
+                    if (!start_again.equals("Yes") && !start_again.equals("No")) {
+                        Exception UserinputIsInvalid = new Exception();
+                        throw UserinputIsInvalid;
+                    } else if (start_again.equals("No")) {
+                        flag_cont = true;
+                       System.out.println(ANSI_GREEN+"Thank you for playing 2048 :)"+ANSI_RESET);
+                       return false;
+                    } else {
+                        flag_cont = true;
+                       return true;
+                    }
+                } catch (InputMismatchException e) {
+                    sc.next();
+                    System.out.println(ANSI_RED+"Please input a string"+ANSI_RESET);
+                } catch (Exception UserinputIsInvalid) {
+                    System.out.println(ANSI_YELLOW+"Please input 'Yes' to play again, 'No' to exit the game"+ANSI_RESET);
+                }
+            }
+            return false;
+        }
     }
-
+    //for sorting the leaderboard
+    // https://javaconceptoftheday.com/how-to-sort-a-text-file-in-java/
 class Users
 {
     String usernames;
@@ -609,7 +733,7 @@ class nameCompare implements Comparator<Users>
     }
 }
 
-//marksCompare Class to compare the marks
+//marksCompare Class to compare the scores
 
 class scoresCompare implements Comparator<Users>
 {
